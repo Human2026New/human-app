@@ -27,6 +27,7 @@
 
   <section id="hero">
     <h1>HUMAN</h1>
+    <p id="xpLine">XP: 0 — Nível 0</p>
     <p>Não é um jogo. Não é promessa. É presença.</p>
   </section>
 
@@ -44,11 +45,36 @@
     </div>
 
     <div class="menu">
-      <button data-open="protocol">📜 Protocolo HUM</button>
+      <button id="mineBtn">⛏️ Presença diária</button>
+      <button data-open="missions">🎯 Missões</button>
+      <button data-open="ranking">🏆 Ranking</button>
+      <button data-open="protocol">📜 Protocolo</button>
       <button data-open="about">ℹ️ Sobre</button>
+      <button id="connectBtn">🔗 Ligar Wallet</button>
+<button id="disconnectBtn" style="display:none;">❌ Desligar</button>
+
     </div>
   </section>
 
+  <!-- MISSÕES -->
+  <section id="missions" class="space hidden">
+    <div class="space-card">
+      <h2>Missões</h2>
+      <ul id="missionList"></ul>
+      <button class="close">Fechar</button>
+    </div>
+  </section>
+
+  <!-- RANKING -->
+  <section id="ranking" class="space hidden">
+    <div class="space-card">
+      <h2>Ranking Global</h2>
+      <ol id="rankingList"><li>Carregando...</li></ol>
+      <button class="close">Fechar</button>
+    </div>
+  </section>
+
+  <!-- PROTOCOLO -->
   <section id="protocol" class="space hidden">
     <div class="space-card">
       <h2>Protocolo HUM</h2>
@@ -61,6 +87,7 @@
     </div>
   </section>
 
+  <!-- SOBRE -->
   <section id="about" class="space hidden">
     <div class="space-card">
       <h2>Sobre</h2>
@@ -78,11 +105,11 @@
 <script>
   window.addEventListener("load", () => {
     setTimeout(() => {
-      const splash = document.getElementById("mainnetSplash");
-      if (splash) splash.style.display = "none";
+      document.getElementById("mainnetSplash").style.display = "none";
     }, 1200);
   });
 </script>
+<script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
 
 <script src="app.js"></script>
 </body>

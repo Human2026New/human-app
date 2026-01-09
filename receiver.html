@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body><script>
+const pt={x:Math.random(),y:Math.random()};
+
+// Vai buscar lista
+fetch('radar.json')
+  .then(r=>r.json())
+  .then(list=>{
+    list.push(pt);
+
+    return fetch('https://api.github.com/repos/Human2026New/human-experience/contents/docs/radar.json',{
+      method:'PUT',
+      headers:{
+        "Authorization":"Bearer TOKEN_AQUI",
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        message:"add human",
+        content:btoa(JSON.stringify(list,null,2)),
+        sha:localStorage.getItem("radar_sha")
+      })
+    });
+  });
+</script></body>
+</html>

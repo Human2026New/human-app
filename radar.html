@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Radar HUM</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  body { margin:0; background:black; }
+  #backBtn { position:fixed; top:10px; left:10px; z-index:20; }
+  #map { width:100vw; height:100vh; display:block; }
+</style>
+</head>
+<body>
+
+<button id="backBtn" onclick="history.back()">⬅ Voltar</button>
+<canvas id="map"></canvas>
+
+<script>
+const canvas=document.getElementById("map");
+const ctx=canvas.getContext("2d");
+function resize(){
+  canvas.width=innerWidth;
+  canvas.height=innerHeight;
+}
+resize();
+addEventListener("resize",resize);
+
+let nodes=[];
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // Grid leve
+  ctx.strokeStyle="rgba(255,255,255,0.1)";
+  ctx.beginPath();
+  ctx.arc(canvas.width/2,canvas.height/2,
+    Math.min(canvas.width,canvas.height)/2-20,0,Math.PI*2);
+  ctx.stroke();
+
+  // Cada ponto pulsante
+  nodes.forEach((n)=>{
+    const px=n.x*canvas.width;
+    const py=n.y*canvas.height;
+    const pulse = (Date.now()/300)%1;
+    const size = 6 + pulse * 4;
+    ctx.fillStyle="rgba(0,200,255,0.7)";
+    ctx.beginPath();
+    ctx.arc(px,py,size,0,Math.PI*2);
+    ctx.fill();
+  });
+
+  requestAnimationFrame(draw);
+}
+
+async function load(){
+  try{
+    const res=await fetch("radar.json?cache="+Date.now());
+    nodes=await res.json();
+  }catch(e){
+    console.warn("Falha radar.json");
+  }
+}
+load();
+setInterval(load,10000);
+draw();
+</script>
+
+</body>
+</html>
