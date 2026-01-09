@@ -42,7 +42,9 @@ async function syncUser() {
     state.xp = d.xp || 0;
     state.level = d.level || 0;
     updateUI();
-  } catch {}
+  } catch (err) {
+    console.warn("❌ Falhou /hum/me");
+  }
 }
 
 /* ---------- MARK PRESENCE ---------- */
@@ -56,7 +58,9 @@ async function markPresence() {
     });
     await syncUser();
     await syncMissions();
-  } catch {}
+  } catch (err) {
+    console.warn("❌ Falhou /mine");
+  }
 }
 
 /* ---------- MISSÕES ---------- */
@@ -97,34 +101,44 @@ async function syncStatus() {
   } catch {}
 }
 
-/* ---------- TON CONNECT ---------- */
-const connector = new tonConnect.TonConnect({
-  manifestUrl: "https://TEU_DOMINIO.com/tonconnect-manifest.json"
-});
+/* ---------- TON CONNECT (SAFE MODE) ---------- */
+let connector;
+try {
+  connector = new tonConnect.TonConnect({
+    manifestUrl: "/tonconnect-manifest.json" // ficheiro local por agora
+  });
+} catch (e) {
+  console.warn("TonConnect não inicializado (domínio não válido ainda)");
+  connector = null;
+}
 
 async function updateTonUI() {
-  document.getElementById('connectBtn').style.display =
-    connector.connected ? 'none' : 'block';
-  document.getElementById('disconnectBtn').style.display =
-    connector.connected ? 'block' : 'none';
+  const c = document.getElementById('connectBtn');
+  const d = document.getElementById('disconnectBtn');
+  if (!connector || !connector.connected) {
+    c.style.display = 'block';
+    d.style.display = 'none';
+  } else {
+    c.style.display = 'none';
+    d.style.display = 'block';
+  }
 }
 
 document.getElementById('connectBtn').addEventListener('click', async () => {
+  if (!connector) return alert("Wallet ativa quando o domínio estiver online.");
   await connector.connect();
   updateTonUI();
 });
 
 document.getElementById('disconnectBtn').addEventListener('click', async () => {
+  if (!connector) return;
   await connector.disconnect();
   updateTonUI();
 });
 
-connector.onStatusChange(walletInfo => {
-  if (walletInfo) {
-    console.log("Wallet ligada:", walletInfo.account.address);
-  }
-  updateTonUI();
-});
+if (connector) {
+  connector.onStatusChange(() => updateTonUI());
+}
 
 /* ---------- INIT ---------- */
 (async () => {
@@ -133,9 +147,10 @@ connector.onStatusChange(walletInfo => {
   await syncMissions();
   await syncRanking();
   await markPresence();
+  updateTonUI();
 })();
 
-/* ---------- MODALS & LOOPS ---------- */
+/* ---------- MODALS & REFRESH LOOPS ---------- */
 document.getElementById("mineBtn").addEventListener("click", markPresence);
 
 document.querySelectorAll("[data-open]").forEach(btn =>
