@@ -1,0 +1,11 @@
+{
+  "name": "HUMAN — Presença",
+  "description": "Este NFT não representa valor financeiro. É um registo simbólico de presença humana ao longo do tempo.",
+  "image": "ipfs://CID_DA_IMAGEM",
+  "attributes": [
+    { "trait_type": "Tipo", "value": "Presença" },
+    { "trait_type": "Rede", "value": "TON" },
+    { "trait_type": "Transferível", "value": "Opcional" },
+    { "trait_type": "Valor monetário", "value": "Nenhum" }
+  ]
+}
